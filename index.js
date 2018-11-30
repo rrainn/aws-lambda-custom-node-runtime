@@ -10,7 +10,10 @@ const downloadURL = `https://nodejs.org/dist/v${version}/node-v${version}-linux-
 
 async function main() {
 	let runtimeFileNumber;
-	while (fs.existsSync(path.join(`node_runtime${runtimeFileNumber ? `_${runtimeFileNumber}` : ""}.js`))) {
+	while (true) {
+		if (!fs.existsSync(path.join(`node_runtime${runtimeFileNumber ? `_${runtimeFileNumber}` : ""}.js`))) {
+			break;
+		}
 		if (runtimeFileNumber) {
 			runtimeFileNumber++;
 		} else {
