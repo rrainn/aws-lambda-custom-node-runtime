@@ -24,6 +24,13 @@ async function main() {
 	let bootstrap = fs.readFileSync(path.join(`bootstrap`), 'utf8').replace(/{{NODE_VERSION}}/g, version).replace(/{{NODE_VERSION}}/g, version).replace(/{{NODE_RUNNER_FILE}}/g, nodeRunnerFile);
 	fs.writeFileSync(path.join(`bootstrap`), bootstrap);
 
+	try {
+		await makeExecutable(path.join(`bootstrap`));
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
+
 	// Download Node.js
 	try {
 		await downloadFile(downloadURL, path.join(`node-v${version}-linux-x64.tar.xz`));
@@ -31,6 +38,7 @@ async function main() {
 		fs.unlinkSync(path.join(`node-v${version}-linux-x64.tar.xz`));
 	} catch (e) {
 		console.error(e);
+		throw e;
 	}
 }
 main();
@@ -58,4 +66,8 @@ async function downloadFile(url, path) {
 
 async function unzip(file) {
 	const { stdout, stderr } = await exec(`tar -xJf ${file}`);
+}
+
+async function makeExecutable(file) {
+	const { stdout, stderr } = await exec(`chmod 755 ${file}`);
 }
