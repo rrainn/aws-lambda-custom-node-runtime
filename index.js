@@ -14,7 +14,7 @@ async function main() {
 		if (runtimeFileNumber) {
 			runtimeFileNumber++;
 		} else {
-			runtimeFileNumber = 0;
+			runtimeFileNumber = 1;
 		}
 	}
 	const nodeRunnerFile = `node_runtime${runtimeFileNumber ? `_${runtimeFileNumber}` : ""}.js`;
