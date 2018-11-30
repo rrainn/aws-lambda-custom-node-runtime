@@ -5,7 +5,7 @@ const path = require('path');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const axios = require('axios');
-const version = require('utils/version_cleaner')(process.args[process.args.length - 1]);
+const version = require('./utils/version_cleaner')(process.args[process.args.length - 1]);
 const downloadURL = `https://nodejs.org/dist/v${version}/node-v${version}-linux-x64.tar.xz`;
 
 async function main() {
