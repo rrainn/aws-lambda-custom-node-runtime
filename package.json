@@ -9,11 +9,27 @@
   "bin": {
     "aws-lambda-custom-node-runtime": "index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "amazon",
+    "aws",
+    "lambda",
+    "serverless",
+    "node",
+    "runtime",
+    "custom",
+    "web",
+    "services"
+  ],
   "author": "rrainn, Inc.",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
     "colors": "^1.3.2"
-  }
+  },
+  "homepage": "https://github.com/rrainn/aws-lambda-custom-node-runtime",
+  "bugs": {
+    "url": "https://github.com/rrainn/aws-lambda-custom-node-runtime/issues",
+    "email": "support@rrainn.com"
+  },
+  "repository": "github:rrainn/aws-lambda-custom-node-runtime"
 }
