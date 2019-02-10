@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run cleanup; node index ",
     "cleanup": "rm -fr node-*linux-x64 node-*linux-x64-lambda-runtime.zip bootstrap node_runtime.js"
   },
   "bin": {

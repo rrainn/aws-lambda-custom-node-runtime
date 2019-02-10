@@ -10,7 +10,10 @@ const archiver = require('archiver');
 const rimraf = require('rimraf');
 
 const version = require('./utils/version_cleaner')(process.argv[process.argv.length - 1]);
-const downloadURL = `https://nodejs.org/dist/v${version}/node-v${version}-linux-x64.tar.xz`;
+const nodeFolder = `node-v${version}-linux-x64`;
+const runtimeName = `${nodeFolder}-lambda-runtime`;
+const downloadName = `${nodeFolder}.tar.xz`;
+const downloadURL = `https://nodejs.org/dist/v${version}/${downloadName}`;
 
 function main() {
 	let runtimeFileNumber;
@@ -32,23 +35,22 @@ function main() {
 	.then(() => replaceBootstrapStrings(version, nodeRunnerFile))
 	.then(bootstrap => writeBootstrapToDisk(bootstrap))
 	.then(() => makeExecutable('bootstrap'))
-	.then(() => downloadFile(downloadURL, `node-v${version}-linux-x64.tar.xz`))
+	.then(() => downloadFile(downloadURL, downloadName))
 	.then((fileName) => unzip(fileName))
-	.then(() => createRuntimeZip(`node-v${version}-linux-x64`, `node-v${version}-linux-x64-lambda-runtime`))
+	.then(() => createRuntimeZip(nodeFolder, runtimeName))
 	.then(() => houseKeeping())
 	.then(() => {
-		return console.log(`\n\nYour node runtime is in node-v${version}-linux-x64-lambda-runtime.`.yellow);
+		return console.log(`\n\nYour node runtime is in node-v${version}-linux-x64-lambda-runtime.zip\n`.yellow);
 	})
 	.catch(err => {
-		console.log('oh snap! Got an error!'.red);
+		console.log('Oh snap! Got an error!'.red);
 		throw err;
 	})
 };
 
 const houseKeeping = () => {
 	return new Promise((resolve, reject) => {
-		console.log('housekeeping');
-		rimraf.sync(`node-v${version}-linux-x64`, { glob: false });
+		rimraf.sync(nodeFolder, { glob: false });
 		fs.unlinkSync('bootstrap');
 		fs.unlinkSync('node_runtime.js');
 		console.log('✔ Cleaned up artifacts.'.green);
@@ -58,7 +60,6 @@ const houseKeeping = () => {
 
 const createRuntimeZip = (nodeDir, runtimePath) => {
 	return new Promise((resolve, reject) => {
-		console.log('entering');
 		const archive = archiver('zip', { zlip: { level: 9 } });
 		const output = fs.createWriteStream(`${runtimePath}.zip`);
 
@@ -67,11 +68,8 @@ const createRuntimeZip = (nodeDir, runtimePath) => {
 		archive.file('node_runtime.js', { name: 'node_runtime.js' });
 		archive.directory(`${nodeDir}`, runtimePath);
 		archive.finalize();
-
-		console.log('finalized');
 	
 		output.on('close', () => {
-			console.log('resolve');
 			return resolve(archive)
 		});
 		archive.on('error', err => reject(err));
@@ -140,7 +138,7 @@ const unzip = file => {
 	return exec(`tar -xJf ${file}`)
 	.then(() => {
 		console.log(`✔ Unzipped ${file}.`.green)
-		return 'foo';
+		return file;
 	})
 	.catch((err) => {
 		throw err;
@@ -155,5 +153,11 @@ const makeExecutable = file => {
 	}
 	return Promise.reject(new Error(`File ${file} does not exist!`.red));
 };
+
+
+if (process.argv.length <= 2) {
+    console.log("Usage: " + __filename + " <version>  (ex: aws-lambda-custom-node-runtime 11.9.0)");
+    process.exit(-1);
+}
 
 main();
