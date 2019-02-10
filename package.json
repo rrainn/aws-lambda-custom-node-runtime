@@ -1,10 +1,11 @@
 {
   "name": "aws-lambda-custom-node-runtime",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cleanup": "rm -fr node-*linux-x64 node-*linux-x64-lambda-runtime.zip bootstrap node_runtime.js"
   },
   "bin": {
     "aws-lambda-custom-node-runtime": "index.js"
@@ -23,8 +24,11 @@
   "author": "rrainn, Inc.",
   "license": "MIT",
   "dependencies": {
+    "archiver": "^3.0.0",
+    "archiver-promise": "^1.0.0",
     "axios": "^0.18.0",
-    "colors": "^1.3.2"
+    "colors": "^1.3.2",
+    "rimraf": "^2.6.3"
   },
   "homepage": "https://github.com/rrainn/aws-lambda-custom-node-runtime",
   "bugs": {
