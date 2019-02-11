@@ -1,3 +1,3 @@
 #!/bin/sh
 cd $LAMBDA_TASK_ROOT
-/opt/node-v{{NODE_VERSION}}-linux-x64/bin/node /opt/{{NODE_RUNNER_FILE}}
+/opt/node /opt/{{NODE_RUNNER_FILE}}

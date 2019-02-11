@@ -34,7 +34,7 @@ function main() {
 	copyTemplates([nodeRunnerFile, 'bootstrap'])
 	.then(() => replaceBootstrapStrings(version, nodeRunnerFile))
 	.then(bootstrap => writeBootstrapToDisk(bootstrap))
-	.then(() => makeExecutable('bootstrap'))
+	.then(() => makeExecutable(['bootstrap', nodeRunnerFile]))
 	.then(() => downloadFile(downloadURL, downloadName))
 	.then((fileName) => unzip(fileName))
 	.then(() => createRuntimeZip(nodeFolder, runtimeName))
@@ -66,7 +66,7 @@ const createRuntimeZip = (nodeDir, runtimePath) => {
 		archive.pipe(output);
 		archive.file('bootstrap', { name: 'bootstrap' });
 		archive.file('node_runtime.js', { name: 'node_runtime.js' });
-		archive.directory(`${nodeDir}`, runtimePath);
+		archive.file(`${nodeDir}/bin/node`, { name: 'node' });
 		archive.finalize();
 	
 		output.on('close', () => {
@@ -145,13 +145,17 @@ const unzip = file => {
 	});
 };
 
-const makeExecutable = file => {
-	if (fs.existsSync(file)) {
-		exec(`chmod 755 ${file}`)
-		console.log(`✔ Made ${file} executable.`.green)
-		return Promise.resolve();
-	}
-	return Promise.reject(new Error(`File ${file} does not exist!`.red));
+const makeExecutable = files => {
+	files.map(file => {
+		if (fs.existsSync(file)) {
+			exec(`chmod 755 ${file}`)
+			console.log(`✔ Made ${file} executable.`.green)
+		}
+		else {
+			return Promise.reject(`${file} does not exist!`);
+		}
+	});
+	return Promise.resolve();
 };
 
 
