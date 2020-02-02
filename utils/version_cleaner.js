@@ -1,4 +1,4 @@
-module.exports = version => {
+module.exports = (version) => {
 	version = version.replace(/^v/g, "");
 	let versionArray = version.split(".");
 	while (versionArray.length < 3) {

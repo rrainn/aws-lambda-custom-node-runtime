@@ -64,6 +64,7 @@ function request(options, cb) {
 		options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
 	}
 	options.timeout = 1000;
+
 	var req = http.request('http://' + options.url, options, function(resp) {
 		var data = '';
 		resp.on('data', function(chunk) {
